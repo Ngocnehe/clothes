@@ -6,16 +6,16 @@ export class Category {
   @Prop({ type: SchemaTypes.ObjectId })
   _id: Types.ObjectId;
 
-  @Prop({ unique: true })
+  @Prop({ required: true })
   name: string;
 
   @Prop({ default: true })
   status: boolean;
 
-  @Prop({ type: SchemaTypes.ObjectId, ref: 'Category', default: null })
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'Category', required: false })
   parent_id?: Types.ObjectId;
 
-  @Prop({ type: [SchemaTypes.ObjectId], ref: 'Category', default: [] })
+  @Prop({ type: [SchemaTypes.ObjectId], ref: 'Category', required: false })
   children?: Types.ObjectId[];
 }
 

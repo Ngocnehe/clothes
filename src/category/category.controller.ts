@@ -24,6 +24,11 @@ import { ParamPaginationDto } from 'src/common/param-pagination.dto';
 export class CategoryController {
   constructor(private readonly service: CategoryService) {}
 
+  @Get('all')
+  getAllGetName() {
+    return this.service.findAllGetName();
+  }
+
   // @UseGuards(JwtAuthGuard)
   @UseGuards(JwtAuthGuard, RoleAuthGuard)
   @Roles(Role.ADMIN, Role.USER)
@@ -34,8 +39,6 @@ export class CategoryController {
 
   // @UseGuards(JwtAuthGuard)
   @Get()
-  @UseGuards(JwtAuthGuard, RoleAuthGuard)
-  @Roles(Role.ADMIN, Role.USER)
   async getAll(@Query() params: ParamPaginationDto) {
     const categories = await this.service.findAll(params);
 

@@ -1,7 +1,9 @@
 import {
   Injectable,
   NotFoundException,
+  OnModuleInit,
   Param,
+  UnauthorizedException,
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
@@ -10,9 +12,10 @@ import { UserRepository } from 'src/user/user.repository';
 import * as bcrypt from 'bcrypt';
 import { ParamPaginationDto } from 'src/common/param-pagination.dto';
 import { UpdateUserDto } from 'src/user/dto/update-user.dto';
+import { Role } from 'src/auth/decorator/role.enum';
 
 @Injectable()
-export class UserService {
+export class UserService implements OnModuleInit {
   constructor(private readonly repository: UserRepository) {}
 
   async create(user: CreateUserDto) {
@@ -44,11 +47,11 @@ export class UserService {
   }
 
   async getOne(id: string) {
-    try {
-      return await this.repository.findOne(id, '-password');
-    } catch (error) {
-      throw new NotFoundException('Không tìm thấy user');
+    const user = await this.repository.findOne(id, '-password');
+    if (!user) {
+      throw new UnauthorizedException('Không tìm thấy user');
     }
+    return user;
   }
 
   async updateUser(id: string, updateUser: UpdateUserDto) {
@@ -73,5 +76,21 @@ export class UserService {
       throw new NotFoundException('Không tìm thấy user');
     }
     return user;
+  }
+  async onModuleInit(): Promise<void> {
+    const createUserAdmin: CreateUserDto = {
+      email: 'ngoc@gmail.com',
+      name: 'Ngoc',
+      password: 'Ltyn1012@',
+      status: true,
+      role: [Role.ADMIN],
+    };
+    const initInDB = await this.repository.findByEmail(createUserAdmin.email);
+    if (!initInDB) {
+      await this.repository.create({
+        ...createUserAdmin,
+        password: await bcrypt.hash(createUserAdmin.password, 10),
+      });
+    }
   }
 }

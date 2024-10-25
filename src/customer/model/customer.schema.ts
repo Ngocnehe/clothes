@@ -32,6 +32,9 @@ export class Customer {
 
   @Prop({ default: '' })
   image_url?: string;
+
+  @Prop({ type: String, default: '' })
+  reset_password_token?: string;
 }
 
 export const CustomerSchema = SchemaFactory.createForClass(Customer);

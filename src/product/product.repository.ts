@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { FilterQuery, Model, Types } from 'mongoose';
 import { Product } from 'src/product/model/product.schema';
 
 @Injectable()
@@ -70,6 +70,21 @@ export class ProductRepository {
         { _id: id },
         { $pull: { images: { image_id: { $in: image_ids } } } },
       )
+      .lean<Product>(true);
+  }
+  async updateStock(id: Types.ObjectId, stock: number) {
+    return await this.model
+      .findOneAndUpdate({ _id: id }, { $inc: { stock } }, { new: true })
+      .lean<Product>(true);
+  }
+
+  async findByCategory(filterQuery: FilterQuery<Product>) {
+    return await this.model.find(filterQuery).lean<Product[]>(true);
+  }
+
+  async updateStatus(_id: string, status: boolean) {
+    return await this.model
+      .findOneAndUpdate({ _id }, { status }, { new: true })
       .lean<Product>(true);
   }
 }

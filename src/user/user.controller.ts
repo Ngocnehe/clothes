@@ -7,6 +7,7 @@ import {
   Post,
   Put,
   Query,
+  Request,
   UseGuards,
 } from '@nestjs/common';
 import { Roles } from 'src/auth/decorator/role.decorator';
@@ -24,6 +25,13 @@ import { buildPagination } from 'src/common/common';
 export class UserController {
   constructor(private readonly service: UserService) {}
 
+  @UseGuards(JwtAuthGuard)
+  @Get('me')
+  getMe(@Request() req) {
+    const { _id } = req.user;
+    return this.service.getOne(_id);
+  }
+
   // Tạo user
   @UseGuards(JwtAuthGuard, RoleAuthGuard)
   @Roles(Role.ADMIN)
@@ -33,8 +41,8 @@ export class UserController {
   }
 
   // Lấy tất cả, có tìm kiếm
-  @UseGuards(JwtAuthGuard, RoleAuthGuard)
-  @Roles(Role.ADMIN)
+  // @UseGuards(JwtAuthGuard, RoleAuthGuard)
+  // @Roles(Role.ADMIN)
   @Get()
   async getAllUsers(@Query() page: ParamPaginationDto) {
     const listUsers = await this.service.getAll(page);

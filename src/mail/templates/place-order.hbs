@@ -1,0 +1,63 @@
+<div
+  style='max-width: 600px; margin: auto; border: 1px solid #ccc; padding: 20px; background-color: #fff; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);'
+>
+  <div style='text-align: center; margin-bottom: 20px;'>
+    <h1 style='margin: 0;'>Công Ty XYZ</h1>
+    <p style='margin: 5px 0;'>Địa chỉ: 123 Đường ABC, Thành phố HCM</p>
+    <p style='margin: 5px 0;'>Điện thoại: (012) 345-6789</p>
+  </div>
+
+  <h2 style='margin-top: 0;'>Hóa Đơn</h2>
+  <p>Mã hóa đơn: {{orderId}}</p>
+  <p>Ngày: {{date}}</p>
+
+  <div style='margin-top: 20px;'>
+    <h3>Thông Tin Khách Hàng</h3>
+    <p>Tên: {{customer.name}}</p>
+    <p>Địa chỉ: {{customer.address}}</p>
+    <p>Điện thoại: {{customer.phone_number}}</p>
+  </div>
+
+  <div style='margin-top: 20px;'>
+    <h3>Chi Tiết Sản Phẩm</h3>
+    <table style='width: 100%; border-collapse: collapse;'>
+      <thead>
+        <tr>
+          <th
+            style='border: 1px solid #ccc; padding: 8px; text-align: left;'
+          >Tên Sản Phẩm</th>
+          <th style='border: 1px solid #ccc; padding: 8px; text-align: left;'>Số
+            Lượng</th>
+          <th
+            style='border: 1px solid #ccc; padding: 8px; text-align: left;'
+          >Giá</th>
+          <th
+            style='border: 1px solid #ccc; padding: 8px; text-align: left;'
+          >Tổng</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each items}}
+          <tr>
+            <td style='border: 1px solid #ccc; padding: 8px;'>
+              {{this.product_id.name}}</td>
+            <td
+              style='border: 1px solid #ccc; padding: 8px;'
+            >{{this.quantity}}</td>
+            <td
+              style='border: 1px solid #ccc; padding: 8px;'
+            >{{this.product_id.price}}</td>
+            <td
+              style='border: 1px solid #ccc; padding: 8px;'
+            >{{this.total}}</td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+
+  <div style='text-align: center; margin-top: 20px;'>
+    <p>Tổng Cộng: {{total}}</p>
+    <p>Cảm ơn bạn đã mua hàng!</p>
+  </div>
+</div>

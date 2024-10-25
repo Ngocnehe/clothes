@@ -120,4 +120,57 @@ export class ProductService {
 
     return product;
   }
+
+  async updateStock(id: string, stock: number) {
+    return await this.productRepository.updateStock(
+      new Types.ObjectId(id),
+      stock,
+    );
+  }
+
+  async updateStatus(id: string, status: boolean) {
+    console.log('status', status);
+    checkValisIsObject(id, 'product id');
+    const product = await this.productRepository.updateStatus(id, status);
+
+    if (!product) {
+      throw new NotFoundException('Khong tim thay product');
+    }
+
+    return product;
+  }
+
+  async findByCategory(category_id: string) {
+    if (category_id === 'all') {
+      return await this.productRepository.findAll(1, 1000, 'asc', '');
+    }
+    const category = await this.categoryRepository.findOne(category_id);
+
+    let listProducts: Product[] = [];
+    let i = 0;
+    const products = await this.productRepository.findByCategory({
+      category_id,
+    });
+    listProducts.push(...products);
+    await this.hierarchical(listProducts, category, category_id);
+
+    return listProducts;
+  }
+
+  private async hierarchical(
+    listProducts: Product[],
+    category: any,
+    category_id: string,
+  ) {
+    if (category.children.length > 0) {
+      for (const child of category.children) {
+        const products = await this.productRepository.findByCategory({
+          category_id: child._id,
+        });
+        listProducts.push(...products);
+
+        await this.hierarchical(listProducts, child, category_id);
+      }
+    }
+  }
 }
